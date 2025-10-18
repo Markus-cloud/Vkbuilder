@@ -520,7 +520,7 @@ export default function Index() {
             )}
           >
             <FileText size={18} />
-            Token
+            Токен
           </button>
           <button
             onClick={() => setActiveSection("filters")}
@@ -532,7 +532,7 @@ export default function Index() {
             )}
           >
             <Search size={18} />
-            Filters
+            Фильтры
           </button>
           <button
             onClick={() => setActiveSection("settings")}
@@ -544,7 +544,7 @@ export default function Index() {
             )}
           >
             <Settings size={18} />
-            Settings
+            Настройки
           </button>
           <button
             onClick={() => setActiveSection("stats")}
@@ -556,7 +556,7 @@ export default function Index() {
             )}
           >
             <BarChart3 size={18} />
-            Analytics
+            Аналитика
           </button>
         </div>
 
@@ -618,7 +618,7 @@ export default function Index() {
               {activeSection === "token" && (
                 <Card className="border-border/50 bg-card/50">
                   <CardHeader>
-                    <CardTitle className="text-lg">Токен VK API</CardTitle>
+                    <CardTitle className="text-lg">То��ен VK API</CardTitle>
                     <CardDescription>
                       Вставьте ссылку с токеном или сам токен
                     </CardDescription>
