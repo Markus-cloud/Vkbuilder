@@ -194,7 +194,7 @@ export default function Index() {
     "Казань",
     "Челябинск",
     "Омск",
-    "Самара",
+    "Сам��ра",
     "Ростов-на-Дону",
   ];
 
@@ -706,30 +706,30 @@ export default function Index() {
               {activeSection === "filters" && (
                 <Card className="border-border/50 bg-card/50">
                   <CardHeader>
-                    <CardTitle className="text-lg">Search Filters</CardTitle>
+                    <CardTitle className="text-lg">Фильтры поиска</CardTitle>
                     <CardDescription>
-                      Customize candidate search parameters
+                      Настройте параметры поиска кандидатов
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
-                      <Label>City</Label>
+                      <Label>Город</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="outline" className="w-full justify-between">
-                            {city ? city.title : "Select city"}
-                            <span className="text-muted-foreground">(search)</span>
+                            {city ? city.title : "Выберите город"}
+                            <span className="text-muted-foreground">(поиск)</span>
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="p-0" align="start">
                           <Command>
                             <CommandInput
-                              placeholder="Type city name..."
+                              placeholder="Введите название города..."
                               value={cityQuery}
                               onValueChange={setCityQuery}
                             />
                             <CommandList>
-                              <CommandEmpty>No city found</CommandEmpty>
+                              <CommandEmpty>Город не найден</CommandEmpty>
                               <CommandGroup>
                                 {cities.length > 0
                                   ? cities.map((c) => (
@@ -750,7 +750,7 @@ export default function Index() {
                                         key={name}
                                         value={name}
                                         onSelect={() => {
-                                          addLog(`Popular city: ${name}`);
+                                          addLog(`Популярный город: ${name}`);
                                           fetchCityByName(name);
                                           setCityQuery("");
                                         }}
@@ -766,7 +766,7 @@ export default function Index() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Minimum Age: {minAge}+</Label>
+                      <Label>Минимальный возраст: {minAge}+</Label>
                       <Slider
                         value={[minAge]}
                         min={14}
@@ -777,9 +777,9 @@ export default function Index() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Profession</Label>
+                      <Label>Профессия</Label>
                       <Input
-                        placeholder="e.g. designer"
+                        placeholder="например: дизайнер"
                         value={profession}
                         onChange={(e) => setProfession(e.target.value)}
                       />
@@ -787,9 +787,9 @@ export default function Index() {
 
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <Label>Online Only</Label>
+                        <Label>Только онлайн</Label>
                         <p className="text-xs text-muted-foreground">
-                          Search only online users
+                          Искать только пользователей в сети
                         </p>
                       </div>
                       <Switch checked={onlyOnline} onCheckedChange={setOnlyOnline} />
