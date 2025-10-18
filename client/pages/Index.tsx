@@ -34,7 +34,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Settings, BarChart3, FileText, Users, Search } from "lucide-react";
+import { Settings, BarChart3, FileText, Users, Search, RotateCw, User } from "lucide-react";
 
 interface VKCity {
   id: number;
@@ -190,7 +190,7 @@ export default function Index() {
     "Санкт-Петербург",
     "Новосибирск",
     "Екатеринбург",
-    "Нижн��й Новгород",
+    "Нижн���й Новгород",
     "Казань",
     "Челябинск",
     "Омск",
@@ -863,7 +863,7 @@ export default function Index() {
                   <CardHeader>
                     <CardTitle className="text-lg">Аналитика</CardTitle>
                     <CardDescription>
-                      Просмотрите детальную статистику и отчеты
+                      Просмотрите де��альную статистику и отчеты
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
