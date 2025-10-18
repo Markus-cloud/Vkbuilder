@@ -256,7 +256,7 @@ export default function Index() {
       const t = parseAccessTokenFromText(text);
       if (t) {
         setTokenInput(t);
-        addLog("Токен получен из буфера обмена");
+        addLog("Токен получен из буфера обмен��");
       } else {
         setTokenInput(text);
         addLog("Попытка извлечения токена из вставленного текста");
@@ -485,7 +485,12 @@ export default function Index() {
               <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">
                 VK Бот
               </h1>
-              <p className="text-xs text-sidebar-accent">Автоматизация</p>
+              <p className="text-xs text-sidebar-accent">
+                Автоматизация добавления
+                <br />
+                друзей по фильтрам
+                <br />
+              </p>
             </div>
           </div>
         </div>
@@ -708,7 +713,7 @@ export default function Index() {
                   <CardHeader>
                     <CardTitle className="text-lg">Фильтры поиска</CardTitle>
                     <CardDescription>
-                      Настройте параметры поиска кандидатов
+                      Настройт�� параметры поиска кандидатов
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
