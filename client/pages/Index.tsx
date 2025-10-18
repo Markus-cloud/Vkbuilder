@@ -262,7 +262,7 @@ export default function Index() {
         addLog("Попытка извлечения токена из вставленного текста");
       }
     } catch (e: any) {
-      addLog(`Не удалось прочитать буф��р обмена: ${e.message ?? e}`);
+      addLog(`Не удалось прочитать буфер обмена: ${e.message ?? e}`);
     }
   }, [addLog]);
 
@@ -422,7 +422,7 @@ export default function Index() {
         let items: VKUser[] = [];
         if (consecutiveEmptyFetches.current >= 3) {
           addLog(
-            "Мало кандидатов — расширяю поиск (временно увеличиваю страницы/количество)",
+            "Мало кандидатов — рас��иряю поиск (временно увеличиваю страницы/количество)",
           );
           items = await fetchBatch({
             desired_count: 100,
@@ -454,7 +454,7 @@ export default function Index() {
         if (minFriends || maxFriends)
           addLog(`  ✓ Друзья: ${minFriends || 0}-${maxFriends || "∞"}`);
         if (profession) addLog(`  ✓ Профессия: ${profession}`);
-        if (onlyOnline) addLog(`  ✓ Только онлайн`);
+        if (onlyOnline) addLog(`  ✓ Только онлай��`);
         await sleep(1500);
         continue;
       }
@@ -766,7 +766,7 @@ export default function Index() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Минимальный возраст: {minAge}+</Label>
+                      <Label>Минимальный воз��аст: {minAge}+</Label>
                       <Slider
                         value={[minAge]}
                         min={14}
@@ -822,7 +822,7 @@ export default function Index() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Максимум</Label>
+                          <Label className="text-xs">Максиму��</Label>
                           <Input
                             type="number"
                             value={maxFriends}
@@ -868,15 +868,15 @@ export default function Index() {
               {activeSection === "stats" && (
                 <Card className="border-border/50 bg-card/50">
                   <CardHeader>
-                    <CardTitle className="text-lg">Analytics</CardTitle>
+                    <CardTitle className="text-lg">Аналитика</CardTitle>
                     <CardDescription>
-                      View detailed statistics and reports
+                      Просмотрите детальную статистику и отчеты
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center py-8 text-muted-foreground">
-                      <p>Analytics visualization will be displayed here</p>
-                      <p className="text-sm mt-2">Run the bot to see statistics</p>
+                      <p>Визуализация аналитики будет отображена здесь</p>
+                      <p className="text-sm mt-2">Запустите бота для просмотра статистики</p>
                     </div>
                   </CardContent>
                 </Card>
