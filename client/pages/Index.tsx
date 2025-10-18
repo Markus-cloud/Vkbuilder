@@ -405,7 +405,7 @@ export default function Index() {
 
   const start = useCallback(async () => {
     if (!token) {
-      addLog("��кажите коррект��ый токен VK");
+      addLog("Укажите корректный токен VK");
       return;
     }
     setSuccessCount(0);
@@ -448,7 +448,7 @@ export default function Index() {
 
       if (!user) {
         addLog("⚠️ Нет подходящих кандидатов. Проверьте фильтры:");
-        if (city) addLog(`  ✓ Город: ${city.title}`);
+        if (city) addLog(`  ✓ Го��од: ${city.title}`);
         else addLog(`  ⚠️ Город НЕ выбран`);
         if (minAge) addLog(`  ✓ Мин. возраст: ${minAge}+`);
         if (minFriends || maxFriends)
@@ -590,13 +590,13 @@ export default function Index() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-foreground">
-                {activeSection === "token" && "Token Configuration"}
-                {activeSection === "filters" && "Search Filters"}
-                {activeSection === "settings" && "Speed Settings"}
-                {activeSection === "stats" && "Statistics & Analytics"}
+                {activeSection === "token" && "Конфигурация токена"}
+                {activeSection === "filters" && "Фильтры поиска"}
+                {activeSection === "settings" && "Настройки скорости"}
+                {activeSection === "stats" && "Статистика и анали��ика"}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Daily quotes: «Only photograph what you love – Tim Walker»
+                Ежедневная цитата: «Фотографируй только то, что ты любишь – Тим Уокер»
               </p>
             </div>
             <Button
@@ -604,7 +604,7 @@ export default function Index() {
               size="sm"
               className="bg-sidebar-primary hover:bg-sidebar-primary/90"
             >
-              Search
+              Поиск
             </Button>
           </div>
         </header>
@@ -625,7 +625,7 @@ export default function Index() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Сс��лка с токеном или токен</Label>
+                      <Label>Ссылка с токеном или токен</Label>
                       <div className="flex gap-2">
                         <Input
                           placeholder="https://oauth.vk.com/blank.html#access_token=..."
