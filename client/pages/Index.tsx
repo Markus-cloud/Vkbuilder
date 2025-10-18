@@ -835,34 +835,6 @@ export default function Index() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
-                      <Label>Диапазон друзей</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs">Ми��имум</Label>
-                          <Input
-                            type="number"
-                            value={minFriends}
-                            onChange={(e) =>
-                              setMinFriends(parseInt(e.target.value || "0", 10))
-                            }
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Максимум</Label>
-                          <Input
-                            type="number"
-                            value={maxFriends}
-                            onChange={(e) =>
-                              setMaxFriends(parseInt(e.target.value || "0", 10))
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-2">
                       <Label>Заявок в час</Label>
                       <Input
                         type="number"
