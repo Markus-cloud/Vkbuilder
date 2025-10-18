@@ -324,7 +324,7 @@ export default function Index() {
         addLog("Токен получен из буфера обмен��");
       } else {
         setTokenInput(text);
-        addLog("Попытк�� извлечения т��кена из вставленного текста");
+        addLog("Попытк�� извлечения токена из вставленного текста");
       }
     } catch (e: any) {
       addLog(`Не удалось прочитать буфер обмена: ${e.message ?? e}`);
@@ -487,7 +487,7 @@ export default function Index() {
         let items: VKUser[] = [];
         if (consecutiveEmptyFetches.current >= 3) {
           addLog(
-            "Мало кандидатов — расширяю поиск (временно ��величиваю страницы/количество)",
+            "Мало кандидатов — расширяю поиск (временно увеличиваю страницы/количество)",
           );
           items = await fetchBatch({
             desired_count: 100,
@@ -628,6 +628,18 @@ export default function Index() {
             <BarChart3 size={18} />
             Аналитика
           </button>
+          <button
+            onClick={() => setActiveSection("profile")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              activeSection === "profile"
+                ? "bg-sidebar-primary/20 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10"
+            )}
+          >
+            <User size={18} />
+            Профиль
+          </button>
         </div>
 
         {/* Sidebar Footer Stats */}
@@ -705,7 +717,7 @@ export default function Index() {
                       <p className="text-xs text-muted-foreground">
                         {tokenOk
                           ? "✓ Токен распознан"
-                          : "✗ Токен не распознан"}
+                          : "✗ Токен не распозна��"}
                       </p>
                     </div>
 
@@ -784,12 +796,12 @@ export default function Index() {
                         <PopoverContent className="p-0" align="start">
                           <Command>
                             <CommandInput
-                              placeholder="Введите название города..."
+                              placeholder="Введите назва��ие города..."
                               value={cityQuery}
                               onValueChange={setCityQuery}
                             />
                             <CommandList>
-                              <CommandEmpty>Город не найден</CommandEmpty>
+                              <CommandEmpty>Город н�� найден</CommandEmpty>
                               <CommandGroup>
                                 {cities.length > 0
                                   ? cities.map((c) => (
