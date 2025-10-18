@@ -447,7 +447,7 @@ export default function Index() {
       setQueueState([...queueRef.current]);
 
       if (!user) {
-        addLog("⚠️ Нет подходящих кандидатов. Проверьте фильтры:");
+        addLog("⚠️ Нет подходящих кандидатов. Про��ерьте фильтры:");
         if (city) addLog(`  ✓ Город: ${city.title}`);
         else addLog(`  ⚠️ Город НЕ выбран`);
         if (minAge) addLog(`  ✓ Мин. возраст: ${minAge}+`);
@@ -544,7 +544,7 @@ export default function Index() {
             )}
           >
             <Settings size={18} />
-            Настройки
+            Настрой��и
           </button>
           <button
             onClick={() => setActiveSection("stats")}
@@ -625,7 +625,7 @@ export default function Index() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Ссылка с токеном или т��кен</Label>
+                      <Label>Ссылка с токеном или токен</Label>
                       <div className="flex gap-2">
                         <Input
                           placeholder="https://oauth.vk.com/blank.html#access_token=..."
@@ -812,7 +812,7 @@ export default function Index() {
                       <Label>Диапазон друзей</Label>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs">Минимум</Label>
+                          <Label className="text-xs">Ми��имум</Label>
                           <Input
                             type="number"
                             value={minFriends}
@@ -934,7 +934,7 @@ export default function Index() {
               {/* Control Card */}
               <Card className="border-border/50 bg-card/50">
                 <CardHeader>
-                  <CardTitle className="text-sm">Control</CardTitle>
+                  <CardTitle className="text-sm">Управление</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button
@@ -942,7 +942,7 @@ export default function Index() {
                     disabled={running}
                     className="w-full bg-sidebar-primary hover:bg-sidebar-primary/90"
                   >
-                    Start
+                    Старт
                   </Button>
                   <Button
                     onClick={stop}
@@ -950,7 +950,7 @@ export default function Index() {
                     disabled={!running}
                     className="w-full"
                   >
-                    Stop
+                    Стоп
                   </Button>
                 </CardContent>
               </Card>
@@ -958,12 +958,12 @@ export default function Index() {
               {/* Stats Cards */}
               <Card className="border-border/50 bg-card/50">
                 <CardHeader>
-                  <CardTitle className="text-sm">CURRENT ARTICLE SCORES</CardTitle>
+                  <CardTitle className="text-sm">ТЕКУЩИЕ ОЦЕНКИ</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">SCORE #1</span>
+                      <span className="text-muted-foreground">ОЦЕНКА #1</span>
                       <span className="text-foreground font-semibold">2,775</span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
@@ -975,7 +975,7 @@ export default function Index() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">SCORE #2</span>
+                      <span className="text-muted-foreground">ОЦЕНКА #2</span>
                       <span className="text-foreground font-semibold">1,380</span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
@@ -987,7 +987,7 @@ export default function Index() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">SCORE #3</span>
+                      <span className="text-muted-foreground">ОЦЕНКА #3</span>
                       <span className="text-foreground font-semibold">3,089</span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
@@ -999,7 +999,7 @@ export default function Index() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">SCORE #4</span>
+                      <span className="text-muted-foreground">ОЦЕНКА #4</span>
                       <span className="text-foreground font-semibold">2,377</span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
@@ -1015,24 +1015,24 @@ export default function Index() {
               {/* Statistics */}
               <Card className="border-border/50 bg-card/50">
                 <CardHeader>
-                  <CardTitle className="text-sm">Statistics</CardTitle>
+                  <CardTitle className="text-sm">Статистика</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Successful Requests</span>
+                    <span className="text-muted-foreground">Успешные заявки</span>
                     <span className="font-semibold text-foreground">{successCount}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Errors</span>
+                    <span className="text-muted-foreground">Ошибки</span>
                     <span className="font-semibold text-foreground">{errorCount}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">VK API Calls</span>
+                    <span className="text-muted-foreground">VK API вызовы</span>
                     <span className="font-semibold text-foreground">{vkCalls}</span>
                   </div>
                   <Separator className="my-2" />
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Contacts</span>
+                    <span className="text-muted-foreground">Всего контактов</span>
                     <span className="font-semibold text-foreground">{sentUserIds.size}</span>
                   </div>
                 </CardContent>
@@ -1041,7 +1041,7 @@ export default function Index() {
               {/* Log */}
               <Card className="border-border/50 bg-card/50 flex flex-col">
                 <CardHeader>
-                  <CardTitle className="text-sm">Log</CardTitle>
+                  <CardTitle className="text-sm">Лог</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
                   <div
@@ -1050,7 +1050,7 @@ export default function Index() {
                   >
                     {logs.length === 0 ? (
                       <div className="text-muted-foreground">
-                        Waiting for bot activity...
+                        Ожидание активности бота...
                       </div>
                     ) : (
                       <div className="space-y-1">
@@ -1067,7 +1067,7 @@ export default function Index() {
                       onClick={() => setLogs([])}
                       className="text-xs h-8"
                     >
-                      Clear
+                      Очистить
                     </Button>
                     <Button
                       variant="outline"
@@ -1075,7 +1075,7 @@ export default function Index() {
                       onClick={() => navigator.clipboard.writeText(logs.join("\n"))}
                       className="text-xs h-8"
                     >
-                      Copy
+                      Копировать
                     </Button>
                   </div>
                 </CardContent>
