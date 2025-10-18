@@ -194,7 +194,7 @@ export default function Index() {
     "Казань",
     "Челябинск",
     "Омск",
-    "Сам��ра",
+    "Самара",
     "Ростов-на-Дону",
   ];
 
@@ -262,7 +262,7 @@ export default function Index() {
         addLog("Попытка извлечения токена из вставленного текста");
       }
     } catch (e: any) {
-      addLog(`Не удалось прочитать буфер обмена: ${e.message ?? e}`);
+      addLog(`Не удалось прочитать буф��р обмена: ${e.message ?? e}`);
     }
   }, [addLog]);
 
@@ -802,17 +802,17 @@ export default function Index() {
               {activeSection === "settings" && (
                 <Card className="border-border/50 bg-card/50">
                   <CardHeader>
-                    <CardTitle className="text-lg">Speed Settings</CardTitle>
+                    <CardTitle className="text-lg">Настройки скорости</CardTitle>
                     <CardDescription>
-                      Rate limiting and delay configuration
+                      Конфигурация ограничения скорости и задержки
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
-                      <Label>Friends Range</Label>
+                      <Label>Диапазон друзей</Label>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs">Minimum</Label>
+                          <Label className="text-xs">Минимум</Label>
                           <Input
                             type="number"
                             value={minFriends}
@@ -822,7 +822,7 @@ export default function Index() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Maximum</Label>
+                          <Label className="text-xs">Максимум</Label>
                           <Input
                             type="number"
                             value={maxFriends}
@@ -837,7 +837,7 @@ export default function Index() {
                     <Separator />
 
                     <div className="space-y-2">
-                      <Label>Requests Per Hour</Label>
+                      <Label>Заявок в час</Label>
                       <Input
                         type="number"
                         value={requestsPerHour}
@@ -848,7 +848,7 @@ export default function Index() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Extra Delay (ms)</Label>
+                      <Label>Дополнительная задержка (мс)</Label>
                       <Input
                         type="number"
                         value={extraDelayMs}
@@ -857,7 +857,7 @@ export default function Index() {
                         }
                       />
                       <p className="text-xs text-muted-foreground">
-                        Effective delay: {effectiveDelay} ms
+                        Фактическая задержка: {effectiveDelay} мс
                       </p>
                     </div>
                   </CardContent>
