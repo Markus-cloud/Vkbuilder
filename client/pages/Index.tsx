@@ -259,7 +259,7 @@ export default function Index() {
         addLog("Токен получен из буфера обмен��");
       } else {
         setTokenInput(text);
-        addLog("Попытка извлечения токена из вставленного текста");
+        addLog("Попытк�� извлечения токена из вставленного текста");
       }
     } catch (e: any) {
       addLog(`Не удалось прочитать буфер обмена: ${e.message ?? e}`);
@@ -591,26 +591,16 @@ export default function Index() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="bg-card/80 backdrop-blur border-b border-border p-6">
+        <header className="bg-card/80 backdrop-blur border-b border-border p-6 mb-1.5" style={{ paddingBottom: "32px" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-foreground">
+              <h2 className="text-2xl font-bold text-foreground" style={{ marginTop: "9px" }}>
                 {activeSection === "token" && "Конфигурация токена"}
                 {activeSection === "filters" && "Фильтры поиска"}
                 {activeSection === "settings" && "Настройки скорости"}
                 {activeSection === "stats" && "Статистика и аналитика"}
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Ежедневная цитата: «Фотографируй только то, что ты любишь – Тим Уокер»
-              </p>
             </div>
-            <Button
-              variant="default"
-              size="sm"
-              className="bg-sidebar-primary hover:bg-sidebar-primary/90"
-            >
-              Поиск
-            </Button>
           </div>
         </header>
 
@@ -835,7 +825,7 @@ export default function Index() {
                   <CardHeader>
                     <CardTitle className="text-lg">Настройки скорости</CardTitle>
                     <CardDescription>
-                      Конфигурация ограничения скорости и задержки
+                      Конфигурация огр��ничения скорости и задержки
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
