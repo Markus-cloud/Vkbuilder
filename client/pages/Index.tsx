@@ -422,7 +422,7 @@ export default function Index() {
         let items: VKUser[] = [];
         if (consecutiveEmptyFetches.current >= 3) {
           addLog(
-            "Мало кандидатов — рас��иряю поиск (временно увеличиваю страницы/количество)",
+            "Мало кандидатов — расширяю поиск (временно увеличиваю страницы/количество)",
           );
           items = await fetchBatch({
             desired_count: 100,
@@ -454,7 +454,7 @@ export default function Index() {
         if (minFriends || maxFriends)
           addLog(`  ✓ Друзья: ${minFriends || 0}-${maxFriends || "∞"}`);
         if (profession) addLog(`  ✓ Профессия: ${profession}`);
-        if (onlyOnline) addLog(`  ✓ Только онлай��`);
+        if (onlyOnline) addLog(`  ✓ Только онлайн`);
         await sleep(1500);
         continue;
       }
@@ -625,7 +625,7 @@ export default function Index() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Ссылка с токеном или токен</Label>
+                      <Label>Ссылка с токеном или т��кен</Label>
                       <div className="flex gap-2">
                         <Input
                           placeholder="https://oauth.vk.com/blank.html#access_token=..."
@@ -766,7 +766,7 @@ export default function Index() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Минимальный воз��аст: {minAge}+</Label>
+                      <Label>Минимальный возраст: {minAge}+</Label>
                       <Slider
                         value={[minAge]}
                         min={14}
@@ -822,7 +822,7 @@ export default function Index() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Максиму��</Label>
+                          <Label className="text-xs">Максимум</Label>
                           <Input
                             type="number"
                             value={maxFriends}
@@ -885,44 +885,44 @@ export default function Index() {
               {/* Articles Table Style Card */}
               <Card className="border-border/50 bg-card/50">
                 <CardHeader>
-                  <CardTitle className="text-sm">ARTICLE TITLE</CardTitle>
+                  <CardTitle className="text-sm">НАЗВАНИЕ СТАТЬИ</CardTitle>
                   <CardDescription className="grid grid-cols-5 gap-4 mt-4">
-                    <span>RATING</span>
-                    <span>STATUS</span>
-                    <span>VIEWS</span>
-                    <span>PRICE</span>
-                    <span>DATE</span>
+                    <span>РЕЙТИНГ</span>
+                    <span>СТАТУС</span>
+                    <span>ПРОСМОТРЫ</span>
+                    <span>ЦЕНА</span>
+                    <span>ДАТА</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="grid grid-cols-5 gap-4 text-sm py-2 border-b border-border">
                       <div>
-                        <div className="font-medium text-foreground">Research in Advertising</div>
+                        <div className="font-medium text-foreground">Исследования в рекламе</div>
                       </div>
                       <div>
                         <span className="inline-block w-2 h-2 rounded-full bg-primary mr-2"></span>
-                        <span className="text-xs text-muted-foreground">Open analysis</span>
+                        <span className="text-xs text-muted-foreground">Открыть анализ</span>
                       </div>
                       <div>
                         <div className="w-20 h-1 bg-primary/30 rounded-full"></div>
                       </div>
-                      <div className="text-muted-foreground">Details</div>
-                      <div className="text-muted-foreground text-xs">23 August, 2017</div>
+                      <div className="text-muted-foreground">Детали</div>
+                      <div className="text-muted-foreground text-xs">23 августа 2017</div>
                     </div>
                     <div className="grid grid-cols-5 gap-4 text-sm py-2">
                       <div>
-                        <div className="font-medium text-foreground">Brochure Pitching</div>
+                        <div className="font-medium text-foreground">Продажа брошюр</div>
                       </div>
                       <div>
                         <span className="inline-block w-2 h-2 rounded-full bg-muted mr-2"></span>
-                        <span className="text-xs text-muted-foreground">Close analysis</span>
+                        <span className="text-xs text-muted-foreground">Закрыть анализ</span>
                       </div>
                       <div>
                         <div className="w-16 h-1 bg-primary/30 rounded-full"></div>
                       </div>
-                      <div className="text-muted-foreground">Details</div>
-                      <div className="text-muted-foreground text-xs">23 August, 2017</div>
+                      <div className="text-muted-foreground">Детали</div>
+                      <div className="text-muted-foreground text-xs">23 августа 2017</div>
                     </div>
                   </div>
                 </CardContent>
