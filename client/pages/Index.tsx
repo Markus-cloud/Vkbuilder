@@ -448,7 +448,7 @@ export default function Index() {
 
       if (!user) {
         addLog("⚠️ Нет подходящих кандидатов. Проверьте фильтры:");
-        if (city) addLog(`  ✓ Го��од: ${city.title}`);
+        if (city) addLog(`  ✓ Город: ${city.title}`);
         else addLog(`  ⚠️ Город НЕ выбран`);
         if (minAge) addLog(`  ✓ Мин. возраст: ${minAge}+`);
         if (minFriends || maxFriends)
@@ -593,7 +593,7 @@ export default function Index() {
                 {activeSection === "token" && "Конфигурация токена"}
                 {activeSection === "filters" && "Фильтры поиска"}
                 {activeSection === "settings" && "Настройки скорости"}
-                {activeSection === "stats" && "Статистика и анали��ика"}
+                {activeSection === "stats" && "Статистика и аналитика"}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
                 Ежедневная цитата: «Фотографируй только то, что ты любишь – Тим Уокер»
@@ -639,7 +639,7 @@ export default function Index() {
                           onClick={pasteFromClipboard}
                           className="whitespace-nowrap"
                         >
-                          Paste
+                          Вставить
                         </Button>
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -652,19 +652,19 @@ export default function Index() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button type="button" variant="outline" className="w-full">
-                          Get Token
+                          Получить токен
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Get Token (Implicit Flow)</DialogTitle>
+                          <DialogTitle>Получить токен (неявный поток)</DialogTitle>
                           <DialogDescription>
-                            Enter your VK app ID, select permissions and open authorization page.
+                            Введите ID вашего приложения VK, выберите разрешения и откройте страницу авторизации.
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-3">
                           <div className="space-y-2">
-                            <Label>Client ID</Label>
+                            <Label>ID клиента</Label>
                             <Input
                               placeholder="1234567"
                               value={oauthClientId}
@@ -672,7 +672,7 @@ export default function Index() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Scope</Label>
+                            <Label>Область доступа</Label>
                             <Input
                               placeholder="friends,offline"
                               value={oauthScopes}
@@ -681,7 +681,7 @@ export default function Index() {
                           </div>
                           <div className="flex gap-2">
                             <Button onClick={openOauth} className="flex-1">
-                              Open VK OAuth
+                              Открыть VK OAuth
                             </Button>
                             <Button
                               variant="secondary"
@@ -692,7 +692,7 @@ export default function Index() {
                                 )
                               }
                             >
-                              Docs
+                              Документация
                             </Button>
                           </div>
                         </div>
