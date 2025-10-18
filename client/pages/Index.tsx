@@ -113,7 +113,18 @@ export default function Index() {
 
   const [sentUserIds, setSentUserIds] = useState<Set<number>>(new Set());
 
-  const [activeSection, setActiveSection] = useState<"token" | "filters" | "settings" | "stats">("token");
+  const [activeSection, setActiveSection] = useState<"token" | "filters" | "settings" | "stats" | "profile">("token");
+
+  const [profileData, setProfileData] = useState<{
+    photo?: string;
+    firstName?: string;
+    lastName?: string;
+    friendsCount?: number;
+    requestsCount?: number;
+    newMessages?: number;
+  } | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const profileRefreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     try {
