@@ -794,6 +794,32 @@ export default function Index() {
                       </div>
                       <Switch checked={onlyOnline} onCheckedChange={setOnlyOnline} />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label>Диапазон друзей</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Минимум</Label>
+                          <Input
+                            type="number"
+                            value={minFriends}
+                            onChange={(e) =>
+                              setMinFriends(parseInt(e.target.value || "0", 10))
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Максимум</Label>
+                          <Input
+                            type="number"
+                            value={maxFriends}
+                            onChange={(e) =>
+                              setMaxFriends(parseInt(e.target.value || "0", 10))
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -876,7 +902,7 @@ export default function Index() {
                   <CardContent>
                     <div className="text-center py-8 text-muted-foreground">
                       <p>Визуализация аналитики будет отображена здесь</p>
-                      <p className="text-sm mt-2">Запустите бота для просмотра статистики</p>
+                      <p className="text-sm mt-2">��апустите бота для просмотра статистики</p>
                     </div>
                   </CardContent>
                 </Card>
