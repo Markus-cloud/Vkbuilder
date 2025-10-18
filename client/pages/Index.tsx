@@ -676,6 +676,7 @@ export default function Index() {
                 {activeSection === "filters" && "Фильтры поиска"}
                 {activeSection === "settings" && "Настройки скорости"}
                 {activeSection === "stats" && "Статистика и аналитика"}
+                {activeSection === "profile" && "Мой профиль"}
               </h2>
             </div>
           </div>
@@ -717,7 +718,7 @@ export default function Index() {
                       <p className="text-xs text-muted-foreground">
                         {tokenOk
                           ? "✓ Токен распознан"
-                          : "✗ Токен не распозна��"}
+                          : "✗ Токен не распознан"}
                       </p>
                     </div>
 
@@ -796,12 +797,12 @@ export default function Index() {
                         <PopoverContent className="p-0" align="start">
                           <Command>
                             <CommandInput
-                              placeholder="Введите назва��ие города..."
+                              placeholder="Введите название города..."
                               value={cityQuery}
                               onValueChange={setCityQuery}
                             />
                             <CommandList>
-                              <CommandEmpty>Город н�� найден</CommandEmpty>
+                              <CommandEmpty>Город не найден</CommandEmpty>
                               <CommandGroup>
                                 {cities.length > 0
                                   ? cities.map((c) => (
