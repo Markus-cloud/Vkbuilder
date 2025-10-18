@@ -216,7 +216,7 @@ export default function Index() {
           addLog(`Город не найден: ${name}`);
         }
       } catch (e: any) {
-        addLog(`Ошиб��а поиска города: ${e.message ?? e}`);
+        addLog(`Ошибка поиска города: ${e.message ?? e}`);
       }
     },
     [token, addLog],
@@ -449,7 +449,7 @@ export default function Index() {
       if (!user) {
         addLog("⚠️ Нет подходящих кандидатов. Проверьте фильтры:");
         if (city) addLog(`  ✓ Город: ${city.title}`);
-        else addLog(`  ��️ Город НЕ выбран`);
+        else addLog(`  ⚠️ Город НЕ выбран`);
         if (minAge) addLog(`  ✓ Мин. возраст: ${minAge}+`);
         if (minFriends || maxFriends)
           addLog(`  ✓ Друзья: ${minFriends || 0}-${maxFriends || "∞"}`);
@@ -483,7 +483,7 @@ export default function Index() {
             </div>
             <div>
               <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">
-                VK Bot
+                VK Бот
               </h1>
               <p className="text-xs text-sidebar-accent">Автоматизация</p>
             </div>
