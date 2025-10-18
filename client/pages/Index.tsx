@@ -499,11 +499,11 @@ export default function Index() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-sidebar-foreground">Nancy Ramos</p>
-                <p className="text-xs text-sidebar-accent">Social photographer</p>
+                <p className="text-xs text-sidebar-accent">Социальный фотограф</p>
               </div>
             </div>
             <Button size="sm" variant="outline" className="w-full text-xs border-sidebar-primary/30">
-              View profile
+              Просмотр профиля
             </Button>
           </div>
         </div>
