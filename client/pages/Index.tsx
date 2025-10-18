@@ -34,7 +34,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Settings, BarChart3, FileText, Users, Search, RotateCw, User } from "lucide-react";
+import {
+  Settings,
+  BarChart3,
+  FileText,
+  Users,
+  Search,
+  RotateCw,
+  User,
+} from "lucide-react";
 
 interface VKCity {
   id: number;
@@ -113,7 +121,9 @@ export default function Index() {
 
   const [sentUserIds, setSentUserIds] = useState<Set<number>>(new Set());
 
-  const [activeSection, setActiveSection] = useState<"token" | "filters" | "settings" | "stats" | "profile">("token");
+  const [activeSection, setActiveSection] = useState<
+    "token" | "filters" | "settings" | "stats" | "profile"
+  >("token");
 
   const [profileData, setProfileData] = useState<{
     photo?: string;
@@ -200,12 +210,9 @@ export default function Index() {
     if (!token) return;
     setProfileLoading(true);
     try {
-      const res = await fetch(
-        `/api/vk/user?fields=photo_100,friends_count`,
-        {
-          headers: { "x-vk-token": token },
-        },
-      );
+      const res = await fetch(`/api/vk/user?fields=photo_100,friends_count`, {
+        headers: { "x-vk-token": token },
+      });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       if (data.user) {
@@ -217,7 +224,9 @@ export default function Index() {
           requestsCount: data.user.requests_count || 0,
           newMessages: data.user.new_messages || 0,
         });
-        addLog(`Профиль обновлен: ${data.user.first_name} ${data.user.last_name}`);
+        addLog(
+          `Профиль обновлен: ${data.user.first_name} ${data.user.last_name}`,
+        );
       }
     } catch (e: any) {
       addLog(`Ошибка загрузки профиля: ${e.message ?? e}`);
@@ -238,9 +247,12 @@ export default function Index() {
 
     fetchProfileData();
 
-    profileRefreshIntervalRef.current = setInterval(() => {
-      fetchProfileData();
-    }, 10 * 60 * 1000);
+    profileRefreshIntervalRef.current = setInterval(
+      () => {
+        fetchProfileData();
+      },
+      10 * 60 * 1000,
+    );
 
     return () => {
       if (profileRefreshIntervalRef.current) {
@@ -565,14 +577,24 @@ export default function Index() {
           <div className="bg-sidebar-primary/10 rounded-lg p-4">
             <div className="flex items-center gap-3 mb-3">
               <div className="h-12 w-12 rounded-full bg-sidebar-primary/20 flex items-center justify-center">
-                <span className="text-lg font-bold text-sidebar-primary">НР</span>
+                <span className="text-lg font-bold text-sidebar-primary">
+                  НР
+                </span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-sidebar-foreground">Nancy Ramos</p>
-                <p className="text-xs text-sidebar-accent">Социальный фотограф</p>
+                <p className="text-sm font-semibold text-sidebar-foreground">
+                  Nancy Ramos
+                </p>
+                <p className="text-xs text-sidebar-accent">
+                  Социальный фотограф
+                </p>
               </div>
             </div>
-            <Button size="sm" variant="outline" className="w-full text-xs border-sidebar-primary/30">
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full text-xs border-sidebar-primary/30"
+            >
               Просмотр профиля
             </Button>
           </div>
@@ -586,7 +608,7 @@ export default function Index() {
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
               activeSection === "token"
                 ? "bg-sidebar-primary/20 text-sidebar-primary"
-                : "text-sidebar-foreground hover:bg-sidebar-primary/10"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
             )}
           >
             <FileText size={18} />
@@ -598,7 +620,7 @@ export default function Index() {
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
               activeSection === "filters"
                 ? "bg-sidebar-primary/20 text-sidebar-primary"
-                : "text-sidebar-foreground hover:bg-sidebar-primary/10"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
             )}
           >
             <Search size={18} />
@@ -610,7 +632,7 @@ export default function Index() {
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
               activeSection === "settings"
                 ? "bg-sidebar-primary/20 text-sidebar-primary"
-                : "text-sidebar-foreground hover:bg-sidebar-primary/10"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
             )}
           >
             <Settings size={18} />
@@ -622,7 +644,7 @@ export default function Index() {
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
               activeSection === "stats"
                 ? "bg-sidebar-primary/20 text-sidebar-primary"
-                : "text-sidebar-foreground hover:bg-sidebar-primary/10"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
             )}
           >
             <BarChart3 size={18} />
@@ -634,7 +656,7 @@ export default function Index() {
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
               activeSection === "profile"
                 ? "bg-sidebar-primary/20 text-sidebar-primary"
-                : "text-sidebar-foreground hover:bg-sidebar-primary/10"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
             )}
           >
             <User size={18} />
@@ -647,19 +669,28 @@ export default function Index() {
           <div className="flex items-center justify-between">
             <span className="text-sidebar-foreground/70">Профиль</span>
             <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
-              <div className="h-full bg-sidebar-primary" style={{ width: "70%" }}></div>
+              <div
+                className="h-full bg-sidebar-primary"
+                style={{ width: "70%" }}
+              ></div>
             </div>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sidebar-foreground/70">Изображения</span>
             <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
-              <div className="h-full bg-sidebar-primary" style={{ width: "45%" }}></div>
+              <div
+                className="h-full bg-sidebar-primary"
+                style={{ width: "45%" }}
+              ></div>
             </div>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sidebar-foreground/70">Аналитика</span>
             <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
-              <div className="h-full bg-sidebar-primary" style={{ width: "60%" }}></div>
+              <div
+                className="h-full bg-sidebar-primary"
+                style={{ width: "60%" }}
+              ></div>
             </div>
           </div>
         </div>
@@ -668,10 +699,16 @@ export default function Index() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="bg-card/80 backdrop-blur border-b border-border p-6 mb-1.5" style={{ paddingBottom: "32px" }}>
+        <header
+          className="bg-card/80 backdrop-blur border-b border-border p-6 mb-1.5"
+          style={{ paddingBottom: "32px" }}
+        >
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-foreground" style={{ marginTop: "9px" }}>
+              <h2
+                className="text-2xl font-bold text-foreground"
+                style={{ marginTop: "9px" }}
+              >
                 {activeSection === "token" && "Конфигурация токена"}
                 {activeSection === "filters" && "Фильтры поиска"}
                 {activeSection === "settings" && "Настройки скорости"}
@@ -704,7 +741,9 @@ export default function Index() {
                           placeholder="https://oauth.vk.com/blank.html#access_token=..."
                           value={tokenInput}
                           onChange={(e) => setTokenInput(e.target.value)}
-                          className={cn(tokenOk ? "ring-1 ring-primary/50" : "")}
+                          className={cn(
+                            tokenOk ? "ring-1 ring-primary/50" : "",
+                          )}
                         />
                         <Button
                           type="button"
@@ -716,23 +755,28 @@ export default function Index() {
                         </Button>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {tokenOk
-                          ? "✓ Токен распознан"
-                          : "✗ Токен не распознан"}
+                        {tokenOk ? "✓ Токен распознан" : "✗ Токен не распознан"}
                       </p>
                     </div>
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button type="button" variant="outline" className="w-full">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                        >
                           Получить токен
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Получить токен (неявный поток)</DialogTitle>
+                          <DialogTitle>
+                            Получить токен (неявный поток)
+                          </DialogTitle>
                           <DialogDescription>
-                            Введите ID вашего приложения VK, выберите разрешения и откройте страницу авторизации.
+                            Введите ID вашего приложения VK, выберите разрешения
+                            и откройте страницу авторизации.
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-3">
@@ -789,9 +833,14 @@ export default function Index() {
                       <Label>Город</Label>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="w-full justify-between">
+                          <Button
+                            variant="outline"
+                            className="w-full justify-between"
+                          >
                             {city ? city.title : "Выберите город"}
-                            <span className="text-muted-foreground">(поиск)</span>
+                            <span className="text-muted-foreground">
+                              (поиск)
+                            </span>
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="p-0" align="start">
@@ -865,7 +914,10 @@ export default function Index() {
                           Искать только пользователей в сети
                         </p>
                       </div>
-                      <Switch checked={onlyOnline} onCheckedChange={setOnlyOnline} />
+                      <Switch
+                        checked={onlyOnline}
+                        onCheckedChange={setOnlyOnline}
+                      />
                     </div>
 
                     <div className="space-y-2">
@@ -901,7 +953,9 @@ export default function Index() {
               {activeSection === "settings" && (
                 <Card className="border-border/50 bg-card/50">
                   <CardHeader>
-                    <CardTitle className="text-lg">Настройки скорости</CardTitle>
+                    <CardTitle className="text-lg">
+                      Настройки скорости
+                    </CardTitle>
                     <CardDescription>
                       Конфигурация огр��ничения скорости и задержки
                     </CardDescription>
@@ -913,7 +967,9 @@ export default function Index() {
                         type="number"
                         value={requestsPerHour}
                         onChange={(e) =>
-                          setRequestsPerHour(parseInt(e.target.value || "0", 10))
+                          setRequestsPerHour(
+                            parseInt(e.target.value || "0", 10),
+                          )
                         }
                       />
                     </div>
@@ -947,7 +1003,9 @@ export default function Index() {
                   <CardContent>
                     <div className="text-center py-8 text-muted-foreground">
                       <p>Визуализация аналитики будет отображена здесь</p>
-                      <p className="text-sm mt-2">��апустите бота для просмотра статистики</p>
+                      <p className="text-sm mt-2">
+                        ��апустите бота для просмотра статистики
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -969,31 +1027,43 @@ export default function Index() {
                   <div className="space-y-3">
                     <div className="grid grid-cols-5 gap-4 text-sm py-2 border-b border-border">
                       <div>
-                        <div className="font-medium text-foreground">Исследования в рекламе</div>
+                        <div className="font-medium text-foreground">
+                          Исследования в рекламе
+                        </div>
                       </div>
                       <div>
                         <span className="inline-block w-2 h-2 rounded-full bg-primary mr-2"></span>
-                        <span className="text-xs text-muted-foreground">Открыть анализ</span>
+                        <span className="text-xs text-muted-foreground">
+                          Открыть анализ
+                        </span>
                       </div>
                       <div>
                         <div className="w-20 h-1 bg-primary/30 rounded-full"></div>
                       </div>
                       <div className="text-muted-foreground">Детали</div>
-                      <div className="text-muted-foreground text-xs">23 августа 2017</div>
+                      <div className="text-muted-foreground text-xs">
+                        23 августа 2017
+                      </div>
                     </div>
                     <div className="grid grid-cols-5 gap-4 text-sm py-2">
                       <div>
-                        <div className="font-medium text-foreground">Продажа брошюр</div>
+                        <div className="font-medium text-foreground">
+                          Продажа брошюр
+                        </div>
                       </div>
                       <div>
                         <span className="inline-block w-2 h-2 rounded-full bg-muted mr-2"></span>
-                        <span className="text-xs text-muted-foreground">Закрыть анализ</span>
+                        <span className="text-xs text-muted-foreground">
+                          Закрыть анализ
+                        </span>
                       </div>
                       <div>
                         <div className="w-16 h-1 bg-primary/30 rounded-full"></div>
                       </div>
                       <div className="text-muted-foreground">Детали</div>
-                      <div className="text-muted-foreground text-xs">23 августа 2017</div>
+                      <div className="text-muted-foreground text-xs">
+                        23 августа 2017
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -1034,50 +1104,102 @@ export default function Index() {
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Успешные заявки</span>
-                      <span className="text-foreground font-semibold">{successCount}</span>
+                      <span className="text-muted-foreground">
+                        Успешные заявки
+                      </span>
+                      <span className="text-foreground font-semibold">
+                        {successCount}
+                      </span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary"
-                        style={{ width: successCount > 0 ? Math.min((successCount / Math.max(successCount + errorCount, 1)) * 100, 100) : 0 + "%" }}
+                        style={{
+                          width:
+                            successCount > 0
+                              ? Math.min(
+                                  (successCount /
+                                    Math.max(successCount + errorCount, 1)) *
+                                    100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
                       ></div>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Ошибки</span>
-                      <span className="text-foreground font-semibold">{errorCount}</span>
+                      <span className="text-foreground font-semibold">
+                        {errorCount}
+                      </span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary"
-                        style={{ width: errorCount > 0 ? Math.min((errorCount / Math.max(successCount + errorCount, 1)) * 100, 100) : 0 + "%" }}
+                        style={{
+                          width:
+                            errorCount > 0
+                              ? Math.min(
+                                  (errorCount /
+                                    Math.max(successCount + errorCount, 1)) *
+                                    100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
                       ></div>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">VK API вызовы</span>
-                      <span className="text-foreground font-semibold">{vkCalls}</span>
+                      <span className="text-muted-foreground">
+                        VK API вызовы
+                      </span>
+                      <span className="text-foreground font-semibold">
+                        {vkCalls}
+                      </span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary"
-                        style={{ width: vkCalls > 0 ? Math.min((vkCalls / Math.max(vkCalls * 0.5, 1)) * 100, 100) : 0 + "%" }}
+                        style={{
+                          width:
+                            vkCalls > 0
+                              ? Math.min(
+                                  (vkCalls / Math.max(vkCalls * 0.5, 1)) * 100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
                       ></div>
                     </div>
                   </div>
                   <Separator className="my-2" />
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Всего контактов</span>
-                      <span className="text-foreground font-semibold">{sentUserIds.size}</span>
+                      <span className="text-muted-foreground">
+                        Всего контактов
+                      </span>
+                      <span className="text-foreground font-semibold">
+                        {sentUserIds.size}
+                      </span>
                     </div>
                     <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary"
-                        style={{ width: sentUserIds.size > 0 ? Math.min((sentUserIds.size / Math.max(sentUserIds.size * 0.7, 1)) * 100, 100) : 0 + "%" }}
+                        style={{
+                          width:
+                            sentUserIds.size > 0
+                              ? Math.min(
+                                  (sentUserIds.size /
+                                    Math.max(sentUserIds.size * 0.7, 1)) *
+                                    100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -1101,7 +1223,9 @@ export default function Index() {
                     ) : (
                       <div className="space-y-1">
                         {logs.map((l, i) => (
-                          <div key={i} className="text-[10px]">{l}</div>
+                          <div key={i} className="text-[10px]">
+                            {l}
+                          </div>
                         ))}
                       </div>
                     )}
@@ -1118,7 +1242,9 @@ export default function Index() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigator.clipboard.writeText(logs.join("\n"))}
+                      onClick={() =>
+                        navigator.clipboard.writeText(logs.join("\n"))
+                      }
                       className="text-xs h-8"
                     >
                       Копировать
