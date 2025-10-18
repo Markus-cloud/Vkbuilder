@@ -549,7 +549,7 @@ export default function Index() {
             )}
           >
             <Settings size={18} />
-            Настрой��и
+            ��астрой��и
           </button>
           <button
             onClick={() => setActiveSection("stats")}
@@ -850,7 +850,7 @@ export default function Index() {
                         }
                       />
                       <p className="text-xs text-muted-foreground">
-                        Фактическая задержка: {effectiveDelay} мс
+                        Фактическ��я задержка: {effectiveDelay} мс
                       </p>
                     </div>
                   </CardContent>
@@ -1010,23 +1010,55 @@ export default function Index() {
                 <CardHeader>
                   <CardTitle className="text-sm">Статистика</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Успешные заявки</span>
-                    <span className="font-semibold text-foreground">{successCount}</span>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Успешные заявки</span>
+                      <span className="text-foreground font-semibold">{successCount}</span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{ width: successCount > 0 ? Math.min((successCount / Math.max(successCount + errorCount, 1)) * 100, 100) : 0 + "%" }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Ошибки</span>
-                    <span className="font-semibold text-foreground">{errorCount}</span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Ошибки</span>
+                      <span className="text-foreground font-semibold">{errorCount}</span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{ width: errorCount > 0 ? Math.min((errorCount / Math.max(successCount + errorCount, 1)) * 100, 100) : 0 + "%" }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">VK API вызовы</span>
-                    <span className="font-semibold text-foreground">{vkCalls}</span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">VK API вызовы</span>
+                      <span className="text-foreground font-semibold">{vkCalls}</span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{ width: vkCalls > 0 ? Math.min((vkCalls / Math.max(vkCalls * 0.5, 1)) * 100, 100) : 0 + "%" }}
+                      ></div>
+                    </div>
                   </div>
                   <Separator className="my-2" />
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Всего контактов</span>
-                    <span className="font-semibold text-foreground">{sentUserIds.size}</span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Всего контактов</span>
+                      <span className="text-foreground font-semibold">{sentUserIds.size}</span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{ width: sentUserIds.size > 0 ? Math.min((sentUserIds.size / Math.max(sentUserIds.size * 0.7, 1)) * 100, 100) : 0 + "%" }}
+                      ></div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
