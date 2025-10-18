@@ -405,7 +405,7 @@ export default function Index() {
 
   const start = useCallback(async () => {
     if (!token) {
-      addLog("Укажите корректный токен VK");
+      addLog("��кажите коррект��ый токен VK");
       return;
     }
     setSuccessCount(0);
@@ -563,19 +563,19 @@ export default function Index() {
         {/* Sidebar Footer Stats */}
         <div className="p-4 border-t border-sidebar-border space-y-3 text-xs">
           <div className="flex items-center justify-between">
-            <span className="text-sidebar-foreground/70">Profile</span>
+            <span className="text-sidebar-foreground/70">Профиль</span>
             <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
               <div className="h-full bg-sidebar-primary" style={{ width: "70%" }}></div>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sidebar-foreground/70">Images</span>
+            <span className="text-sidebar-foreground/70">Изображения</span>
             <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
               <div className="h-full bg-sidebar-primary" style={{ width: "45%" }}></div>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sidebar-foreground/70">Analytics</span>
+            <span className="text-sidebar-foreground/70">Аналитика</span>
             <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
               <div className="h-full bg-sidebar-primary" style={{ width: "60%" }}></div>
             </div>
@@ -618,14 +618,14 @@ export default function Index() {
               {activeSection === "token" && (
                 <Card className="border-border/50 bg-card/50">
                   <CardHeader>
-                    <CardTitle className="text-lg">То��ен VK API</CardTitle>
+                    <CardTitle className="text-lg">Токен VK API</CardTitle>
                     <CardDescription>
                       Вставьте ссылку с токеном или сам токен
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Ссылка с токеном или токен</Label>
+                      <Label>Сс��лка с токеном или токен</Label>
                       <div className="flex gap-2">
                         <Input
                           placeholder="https://oauth.vk.com/blank.html#access_token=..."
