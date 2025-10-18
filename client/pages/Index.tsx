@@ -196,6 +196,60 @@ export default function Index() {
     return () => clearTimeout(id);
   }, [cityQuery, token, fetchCities]);
 
+  const fetchProfileData = useCallback(async () => {
+    if (!token) return;
+    setProfileLoading(true);
+    try {
+      const res = await fetch(
+        `/api/vk/user?fields=photo_100,friends_count`,
+        {
+          headers: { "x-vk-token": token },
+        },
+      );
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      if (data.user) {
+        setProfileData({
+          photo: data.user.photo_100,
+          firstName: data.user.first_name,
+          lastName: data.user.last_name,
+          friendsCount: data.user.friends_count || 0,
+          requestsCount: data.user.requests_count || 0,
+          newMessages: data.user.new_messages || 0,
+        });
+        addLog(`Профиль обновлен: ${data.user.first_name} ${data.user.last_name}`);
+      }
+    } catch (e: any) {
+      addLog(`Ошибка загрузки профиля: ${e.message ?? e}`);
+    } finally {
+      setProfileLoading(false);
+    }
+  }, [token, addLog]);
+
+  useEffect(() => {
+    if (!token) {
+      setProfileData(null);
+      if (profileRefreshIntervalRef.current) {
+        clearInterval(profileRefreshIntervalRef.current);
+        profileRefreshIntervalRef.current = null;
+      }
+      return;
+    }
+
+    fetchProfileData();
+
+    profileRefreshIntervalRef.current = setInterval(() => {
+      fetchProfileData();
+    }, 10 * 60 * 1000);
+
+    return () => {
+      if (profileRefreshIntervalRef.current) {
+        clearInterval(profileRefreshIntervalRef.current);
+        profileRefreshIntervalRef.current = null;
+      }
+    };
+  }, [token, fetchProfileData]);
+
   const popularCities = [
     "Москва",
     "Санкт-Петербург",
@@ -270,7 +324,7 @@ export default function Index() {
         addLog("Токен получен из буфера обмен��");
       } else {
         setTokenInput(text);
-        addLog("Попытк�� извлечения токена из вставленного текста");
+        addLog("Попытк�� извлечения т��кена из вставленного текста");
       }
     } catch (e: any) {
       addLog(`Не удалось прочитать буфер обмена: ${e.message ?? e}`);
@@ -433,7 +487,7 @@ export default function Index() {
         let items: VKUser[] = [];
         if (consecutiveEmptyFetches.current >= 3) {
           addLog(
-            "Мало кандидатов — расширяю поиск (временно увеличиваю страницы/количество)",
+            "Мало кандидатов — расширяю поиск (временно ��величиваю страницы/количество)",
           );
           items = await fetchBatch({
             desired_count: 100,
