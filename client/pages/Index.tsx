@@ -190,7 +190,7 @@ export default function Index() {
     "Санкт-Петербург",
     "Новосибирск",
     "Екатеринбург",
-    "Нижний Новгород",
+    "Нижн��й Новгород",
     "Казань",
     "Челябинск",
     "Омск",
@@ -945,63 +945,6 @@ export default function Index() {
                   >
                     Стоп
                   </Button>
-                </CardContent>
-              </Card>
-
-              {/* Stats Cards */}
-              <Card className="border-border/50 bg-card/50">
-                <CardHeader>
-                  <CardTitle className="text-sm">ТЕКУЩИЕ ОЦЕНКИ</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">ОЦЕНКА #1</span>
-                      <span className="text-foreground font-semibold">2,775</span>
-                    </div>
-                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary"
-                        style={{ width: "85%" }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">ОЦЕНКА #2</span>
-                      <span className="text-foreground font-semibold">1,380</span>
-                    </div>
-                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary"
-                        style={{ width: "50%" }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">ОЦЕНКА #3</span>
-                      <span className="text-foreground font-semibold">3,089</span>
-                    </div>
-                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary"
-                        style={{ width: "90%" }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">ОЦЕНКА #4</span>
-                      <span className="text-foreground font-semibold">2,377</span>
-                    </div>
-                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary"
-                        style={{ width: "70%" }}
-                      ></div>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
