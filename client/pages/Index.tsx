@@ -34,6 +34,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import {
+  Settings,
+  BarChart3,
+  FileText,
+  Users,
+  Search,
+  RotateCw,
+  User,
+} from "lucide-react";
 
 interface VKCity {
   id: number;
@@ -112,7 +121,21 @@ export default function Index() {
 
   const [sentUserIds, setSentUserIds] = useState<Set<number>>(new Set());
 
-  // Load sent user IDs from localStorage on mount
+  const [activeSection, setActiveSection] = useState<
+    "token" | "filters" | "settings" | "stats" | "profile"
+  >("token");
+
+  const [profileData, setProfileData] = useState<{
+    photo?: string;
+    firstName?: string;
+    lastName?: string;
+    friendsCount?: number;
+    requestsCount?: number;
+    newMessages?: number;
+  } | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const profileRefreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     try {
       const stored = localStorage.getItem("vk_bot_sent_users");
@@ -126,7 +149,6 @@ export default function Index() {
     }
   }, []);
 
-  // Save sent user IDs to localStorage whenever they change
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -184,13 +206,68 @@ export default function Index() {
     return () => clearTimeout(id);
   }, [cityQuery, token, fetchCities]);
 
-  // Popular Russian cities fallback and helper to resolve city id via server
+  const fetchProfileData = useCallback(async () => {
+    if (!token) return;
+    setProfileLoading(true);
+    try {
+      const res = await fetch(`/api/vk/user?fields=photo_100,friends_count`, {
+        headers: { "x-vk-token": token },
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      if (data.user) {
+        setProfileData({
+          photo: data.user.photo_100,
+          firstName: data.user.first_name,
+          lastName: data.user.last_name,
+          friendsCount: data.user.friends_count || 0,
+          requestsCount: data.user.requests_count || 0,
+          newMessages: data.user.new_messages || 0,
+        });
+        addLog(
+          `Профиль обновлен: ${data.user.first_name} ${data.user.last_name}`,
+        );
+      }
+    } catch (e: any) {
+      addLog(`Ошибка загрузки профиля: ${e.message ?? e}`);
+    } finally {
+      setProfileLoading(false);
+    }
+  }, [token, addLog]);
+
+  useEffect(() => {
+    if (!token) {
+      setProfileData(null);
+      if (profileRefreshIntervalRef.current) {
+        clearInterval(profileRefreshIntervalRef.current);
+        profileRefreshIntervalRef.current = null;
+      }
+      return;
+    }
+
+    fetchProfileData();
+
+    profileRefreshIntervalRef.current = setInterval(
+      () => {
+        fetchProfileData();
+      },
+      10 * 60 * 1000,
+    );
+
+    return () => {
+      if (profileRefreshIntervalRef.current) {
+        clearInterval(profileRefreshIntervalRef.current);
+        profileRefreshIntervalRef.current = null;
+      }
+    };
+  }, [token, fetchProfileData]);
+
   const popularCities = [
     "Москва",
     "Санкт-Петербург",
     "Новосибирск",
     "Екатеринбург",
-    "Нижний Новгород",
+    "Нижн���й Новгород",
     "Казань",
     "Челябинск",
     "Омск",
@@ -256,10 +333,10 @@ export default function Index() {
       const t = parseAccessTokenFromText(text);
       if (t) {
         setTokenInput(t);
-        addLog("Токен получен из буфера обмена");
+        addLog("Токен получен из буфера обмен��");
       } else {
         setTokenInput(text);
-        addLog("Попытка извлечения токена из вставленного текста");
+        addLog("Попытк�� извлечения токена из вставленного текста");
       }
     } catch (e: any) {
       addLog(`Не удалось прочитать буфер обмена: ${e.message ?? e}`);
@@ -285,7 +362,6 @@ export default function Index() {
         age_from: minAge || undefined,
         q: undefined as string | undefined,
         online: onlyOnline,
-        // server-side filters to avoid endless non-matching searches
         min_friends: minFriends || undefined,
         max_friends: maxFriends || undefined,
         profession: profession || undefined,
@@ -302,21 +378,17 @@ export default function Index() {
         });
         const data = await res.json();
         if (data.error) throw new Error(data.error);
-        // accumulate vk_calls
         if (data.meta && typeof data.meta.vk_calls === "number") {
           setVkCalls((v) => v + data.meta.vk_calls);
         }
         const items = (data.items as VKUser[]) || [];
-        // Advance offset using server-provided vk_offset when available to avoid re-scanning same VK pages
         if (data.meta && typeof data.meta.vk_offset === "number") {
           nextOffsetRef.current = data.meta.vk_offset;
         } else {
           nextOffsetRef.current += items.length;
         }
         addLog(`Найдено кандидатов: ${items.length}`);
-        // Log VK calls for visibility
         if (data.meta) addLog(`VK calls: ${data.meta.vk_calls ?? 0}`);
-        // Log debug info about rejected samples
         if (data.meta?.raw_samples && data.meta.raw_samples.length > 0) {
           const sample = data.meta.raw_samples[0];
           const reasons = (sample as any)?._rejected_reasons || [];
@@ -346,7 +418,6 @@ export default function Index() {
 
   const candidatePasses = useCallback(
     (u: VKUser) => {
-      // Check if we've already sent a friend request to this user
       if (sentUserIds.has(u.id)) return false;
 
       const age = computeAge(u.bdate);
@@ -356,14 +427,11 @@ export default function Index() {
         typeof u.counters?.friends === "number"
           ? u.counters!.friends
           : undefined;
-      // If friend count filter is set, check if we have the data
       if (minFriends || maxFriends) {
-        // Only enforce if we have friend data, otherwise accept (better than 0 results)
         if (typeof f === "number") {
           if (minFriends && f < minFriends) return false;
           if (maxFriends && f > maxFriends) return false;
         }
-        // If no friend data, allow it (some profiles don't expose this)
       }
       if (profession.trim()) {
         const p = profession.trim().toLowerCase();
@@ -374,7 +442,6 @@ export default function Index() {
         ).toLowerCase();
         if (!occ.includes(p)) return false;
       }
-      // normalize can_send_friend_request: accept 1/true, reject 0/false
       if (
         u.can_send_friend_request === false ||
         u.can_send_friend_request === 0
@@ -399,7 +466,6 @@ export default function Index() {
         addLog(
           `Заявка отправлена: ${user.first_name} ${user.last_name} (id${user.id})`,
         );
-        // Mark this user as sent so we don't contact them again in future sessions
         setSentUserIds((prev) => new Set([...prev, user.id]));
         setSuccessCount((s) => s + 1);
         return true;
@@ -416,7 +482,7 @@ export default function Index() {
 
   const start = useCallback(async () => {
     if (!token) {
-      addLog("Укажите корр��ктный токен VK");
+      addLog("Укажите корректный токен VK");
       return;
     }
     setSuccessCount(0);
@@ -429,9 +495,7 @@ export default function Index() {
     const consecutiveEmptyFetches = { current: 0 };
 
     while (runningRef.current) {
-      // Refill queue synchronously using queueRef
       if (queueRef.current.length < 5) {
-        // If we've had several empty fetches, widen search parameters
         let items: VKUser[] = [];
         if (consecutiveEmptyFetches.current >= 3) {
           addLog(
@@ -456,12 +520,11 @@ export default function Index() {
         }
       }
 
-      // Pop next candidate synchronously
       const user = queueRef.current.shift();
       setQueueState([...queueRef.current]);
 
       if (!user) {
-        addLog("⚠️ Нет подходящих кандидатов. Проверьте фильтры:");
+        addLog("⚠️ Нет подходящих кандидатов. Про��ерьте фильтры:");
         if (city) addLog(`  ✓ Город: ${city.title}`);
         else addLog(`  ⚠️ Город НЕ выбран`);
         if (minAge) addLog(`  ✓ Мин. возраст: ${minAge}+`);
@@ -469,7 +532,6 @@ export default function Index() {
           addLog(`  ✓ Друзья: ${minFriends || 0}-${maxFriends || "∞"}`);
         if (profession) addLog(`  ✓ Профессия: ${profession}`);
         if (onlyOnline) addLog(`  ✓ Только онлайн`);
-        // Wait a bit and loop — consecutiveEmptyFetches influences next fetch
         await sleep(1500);
         continue;
       }
@@ -487,404 +549,713 @@ export default function Index() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-accent/30">
-      <header className="border-b bg-card/60 backdrop-blur supports-[backdrop-filter]:bg-card/40">
-        <div className="container mx-auto flex items-center justify-between py-4">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground grid place-items-center font-extrabold">
+    <div className="min-h-screen bg-gradient-to-br from-background to-accent/20 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
+        {/* Logo */}
+        <div className="p-6 border-b border-sidebar-border">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-10 w-10 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground grid place-items-center font-bold text-sm">
               VK
             </div>
             <div>
-              <h1 className="text-lg font-semibold leading-tight">
-                Автоматизация добавления друзей VK
+              <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">
+                VK Бот
               </h1>
-              <p className="text-xs text-muted-foreground">
-                Без логина/пароля — только токен. В реальном времени показывает
-                все действия.
+              <p className="text-xs text-sidebar-accent">
+                Автоматизация добавления
+                <br />
+                друзей по фильтрам
+                <br />
               </p>
             </div>
           </div>
-          <div className="text-xs text-muted-foreground">
-            Создано для: Дамир С��дыков
+        </div>
+
+        {/* Profile Card */}
+        <div className="p-6 border-b border-sidebar-border">
+          <div className="bg-sidebar-primary/10 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-12 w-12 rounded-full bg-sidebar-primary/20 flex items-center justify-center">
+                <span className="text-lg font-bold text-sidebar-primary">
+                  НР
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-sidebar-foreground">
+                  Nancy Ramos
+                </p>
+                <p className="text-xs text-sidebar-accent">
+                  Социальный фотограф
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full text-xs border-sidebar-primary/30"
+            >
+              Просмотр профиля
+            </Button>
           </div>
         </div>
-      </header>
 
-      <main className="container mx-auto py-6 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Токен VK API</CardTitle>
-              <CardDescription>
-                Вставьте ссылку с токеном или сам токен — он будет распознан
-                автоматически.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-3">
-                <div className="grid gap-2">
-                  <Label htmlFor="token">Ссылка с токеном или токен</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="token"
-                      placeholder="https://oauth.vk.com/blank.html#access_token=..."
-                      value={tokenInput}
-                      onChange={(e) => setTokenInput(e.target.value)}
-                      className={cn(tokenOk ? "ring-1 ring-primary/50" : "")}
-                    />
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={pasteFromClipboard}
-                    >
-                      Вставить из буфера
-                    </Button>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {tokenOk
-                      ? "Токен распознан и готов к использованию"
-                      : "Токен не распознан"}
-                  </div>
-                </div>
+        {/* Navigation Menu */}
+        <div className="flex-1 p-4 space-y-2">
+          <button
+            onClick={() => setActiveSection("token")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              activeSection === "token"
+                ? "bg-sidebar-primary/20 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
+            )}
+          >
+            <FileText size={18} />
+            Токен
+          </button>
+          <button
+            onClick={() => setActiveSection("filters")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              activeSection === "filters"
+                ? "bg-sidebar-primary/20 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
+            )}
+          >
+            <Search size={18} />
+            Фильтры
+          </button>
+          <button
+            onClick={() => setActiveSection("settings")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              activeSection === "settings"
+                ? "bg-sidebar-primary/20 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
+            )}
+          >
+            <Settings size={18} />
+            ��астрой��и
+          </button>
+          <button
+            onClick={() => setActiveSection("stats")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              activeSection === "stats"
+                ? "bg-sidebar-primary/20 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
+            )}
+          >
+            <BarChart3 size={18} />
+            Аналитика
+          </button>
+          <button
+            onClick={() => setActiveSection("profile")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              activeSection === "profile"
+                ? "bg-sidebar-primary/20 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-primary/10",
+            )}
+          >
+            <User size={18} />
+            Профиль
+          </button>
+        </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button type="button" variant="outline">
-                        Получить токен
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>
-                          Получение токена (Implicit Flow)
-                        </DialogTitle>
-                        <DialogDescription>
-                          Введите ID вашего VK приложения, выберите права и
-                          откройте страницу авторизации. После выдачи токена
-                          скопируйте URL из адресной строки.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-3">
-                        <div className="grid gap-2">
-                          <Label>Client ID (ID приложения VK)</Label>
-                          <Input
-                            placeholder="Например: 1234567"
-                            value={oauthClientId}
-                            onChange={(e) => setOauthClientId(e.target.value)}
-                          />
+        {/* Sidebar Footer Stats */}
+        <div className="p-4 border-t border-sidebar-border space-y-3 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-sidebar-foreground/70">Профиль</span>
+            <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-sidebar-primary"
+                style={{ width: "70%" }}
+              ></div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sidebar-foreground/70">Изображения</span>
+            <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-sidebar-primary"
+                style={{ width: "45%" }}
+              ></div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sidebar-foreground/70">Аналитика</span>
+            <div className="h-1.5 w-24 bg-sidebar-primary/30 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-sidebar-primary"
+                style={{ width: "60%" }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Header */}
+        <header
+          className="bg-card/80 backdrop-blur border-b border-border p-6 mb-1.5"
+          style={{ paddingBottom: "32px" }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2
+                className="text-2xl font-bold text-foreground"
+                style={{ marginTop: "9px" }}
+              >
+                {activeSection === "token" && "Конфигурация токена"}
+                {activeSection === "filters" && "Фильтры поиска"}
+                {activeSection === "settings" && "Настройки скорости"}
+                {activeSection === "stats" && "Статистика и аналитика"}
+                {activeSection === "profile" && "Мой профиль"}
+              </h2>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-6">
+          <div className="grid gap-6 grid-cols-3">
+            {/* Left Column - Main Content */}
+            <div className="col-span-2 space-y-6">
+              {/* Token Section */}
+              {activeSection === "token" && (
+                <Card className="border-border/50 bg-card/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Токен VK API</CardTitle>
+                    <CardDescription>
+                      Вставьте ссылку с токеном или сам токен
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Ссылка с токеном или токен</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="https://oauth.vk.com/blank.html#access_token=..."
+                          value={tokenInput}
+                          onChange={(e) => setTokenInput(e.target.value)}
+                          className={cn(
+                            tokenOk ? "ring-1 ring-primary/50" : "",
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={pasteFromClipboard}
+                          className="whitespace-nowrap"
+                        >
+                          Вставить
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {tokenOk ? "✓ Токен распознан" : "✗ Токен не распознан"}
+                      </p>
+                    </div>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                        >
+                          Получить токен
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>
+                            Получить токен (неявный поток)
+                          </DialogTitle>
+                          <DialogDescription>
+                            Введите ID вашего приложения VK, выберите разрешения
+                            и откройте страницу авторизации.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-3">
+                          <div className="space-y-2">
+                            <Label>ID клиента</Label>
+                            <Input
+                              placeholder="1234567"
+                              value={oauthClientId}
+                              onChange={(e) => setOauthClientId(e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Область доступа</Label>
+                            <Input
+                              placeholder="friends,offline"
+                              value={oauthScopes}
+                              onChange={(e) => setOauthScopes(e.target.value)}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <Button onClick={openOauth} className="flex-1">
+                              Открыть VK OAuth
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              onClick={() =>
+                                window.open(
+                                  "https://dev.vk.com/ru/api/access-token/implicit-flow-user",
+                                  "_blank",
+                                )
+                              }
+                            >
+                              Документация
+                            </Button>
+                          </div>
                         </div>
-                        <div className="grid gap-2">
-                          <Label>Права (scope)</Label>
-                          <Input
-                            placeholder="friends,offline"
-                            value={oauthScopes}
-                            onChange={(e) => setOauthScopes(e.target.value)}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Button onClick={openOauth}>Открыть VK OAuth</Button>
+                      </DialogContent>
+                    </Dialog>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Filters Section */}
+              {activeSection === "filters" && (
+                <Card className="border-border/50 bg-card/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Фильтры поиска</CardTitle>
+                    <CardDescription>
+                      Настройт�� параметры поиска кандидатов
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                      <Label>Город</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
                           <Button
-                            variant="secondary"
-                            onClick={() =>
-                              window.open(
-                                "https://dev.vk.com/ru/api/access-token/implicit-flow-user",
-                                "_blank",
-                              )
-                            }
+                            variant="outline"
+                            className="w-full justify-between"
                           >
-                            Инструкция VK
+                            {city ? city.title : "Выберите город"}
+                            <span className="text-muted-foreground">
+                              (поиск)
+                            </span>
                           </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0" align="start">
+                          <Command>
+                            <CommandInput
+                              placeholder="Введите название города..."
+                              value={cityQuery}
+                              onValueChange={setCityQuery}
+                            />
+                            <CommandList>
+                              <CommandEmpty>Город не найден</CommandEmpty>
+                              <CommandGroup>
+                                {cities.length > 0
+                                  ? cities.map((c) => (
+                                      <CommandItem
+                                        key={c.id}
+                                        value={String(c.id)}
+                                        onSelect={() => {
+                                          addLog(`Город: ${c.title}`);
+                                          setCity(c);
+                                          setCityQuery("");
+                                        }}
+                                      >
+                                        {c.title}
+                                      </CommandItem>
+                                    ))
+                                  : popularCities.map((name) => (
+                                      <CommandItem
+                                        key={name}
+                                        value={name}
+                                        onSelect={() => {
+                                          addLog(`Популярный город: ${name}`);
+                                          fetchCityByName(name);
+                                          setCityQuery("");
+                                        }}
+                                      >
+                                        {name}
+                                      </CommandItem>
+                                    ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Минимальный возраст: {minAge}+</Label>
+                      <Slider
+                        value={[minAge]}
+                        min={14}
+                        max={60}
+                        step={1}
+                        onValueChange={(v) => setMinAge(v[0])}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Профессия</Label>
+                      <Input
+                        placeholder="например: дизайнер"
+                        value={profession}
+                        onChange={(e) => setProfession(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label>Только онлайн</Label>
+                        <p className="text-xs text-muted-foreground">
+                          Искать только пользователей в сети
+                        </p>
+                      </div>
+                      <Switch
+                        checked={onlyOnline}
+                        onCheckedChange={setOnlyOnline}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Диапазон друзей</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Минимум</Label>
+                          <Input
+                            type="number"
+                            value={minFriends}
+                            onChange={(e) =>
+                              setMinFriends(parseInt(e.target.value || "0", 10))
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Максимум</Label>
+                          <Input
+                            type="number"
+                            value={maxFriends}
+                            onChange={(e) =>
+                              setMaxFriends(parseInt(e.target.value || "0", 10))
+                            }
+                          />
                         </div>
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Фильтры поиска</CardTitle>
-              <CardDescription>
-                Уточните параметры поиска кандидатов.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-5">
-              <div className="grid gap-2">
-                <Label>Город</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-between">
-                      {city ? city.title : "Выберите город"}
-                      <span className="text-muted-foreground">(поиск)</span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0" align="start">
-                    <Command>
-                      <CommandInput
-                        placeholder="Начните вводить город..."
-                        value={cityQuery}
-                        onValueChange={setCityQuery}
+              {/* Settings Section */}
+              {activeSection === "settings" && (
+                <Card className="border-border/50 bg-card/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg">
+                      Настройки скорости
+                    </CardTitle>
+                    <CardDescription>
+                      Конфигурация огр��ничения скорости и задержки
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                      <Label>Заявок в час</Label>
+                      <Input
+                        type="number"
+                        value={requestsPerHour}
+                        onChange={(e) =>
+                          setRequestsPerHour(
+                            parseInt(e.target.value || "0", 10),
+                          )
+                        }
                       />
-                      <CommandList>
-                        <CommandEmpty>Ничего не найдено</CommandEmpty>
-                        <CommandGroup>
-                          {cities.length > 0
-                            ? cities.map((c) => (
-                                <CommandItem
-                                  key={c.id}
-                                  value={String(c.id)}
-                                  onSelect={() => {
-                                    addLog(`Город выбран: ${c.title}`);
-                                    setCity(c);
-                                    setCityQuery("");
-                                  }}
-                                  onPointerDown={() => {
-                                    addLog(
-                                      `Город выбран (pointer): ${c.title}`,
-                                    );
-                                    setCity(c);
-                                    setCityQuery("");
-                                  }}
-                                >
-                                  {c.title}
-                                </CommandItem>
-                              ))
-                            : popularCities.map((name) => (
-                                <CommandItem
-                                  key={name}
-                                  value={name}
-                                  onSelect={() => {
-                                    addLog(`Популярный город выбран: ${name}`);
-                                    fetchCityByName(name);
-                                    setCityQuery("");
-                                  }}
-                                  onPointerDown={() => {
-                                    addLog(
-                                      `Популярный го��од (pointer): ${name}`,
-                                    );
-                                    fetchCityByName(name);
-                                    setCityQuery("");
-                                  }}
-                                >
-                                  {name}
-                                </CommandItem>
-                              ))}
-                        </CommandGroup>
-                        <div className="px-3 pt-2 text-xs text-muted-foreground">
-                          Если нужный город не найден — начните ввод и
-                          попробуйте другой вариант написания (например
-                          «Санкт-Петербург», «СПБ»).
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Дополнительная задержка (мс)</Label>
+                      <Input
+                        type="number"
+                        value={extraDelayMs}
+                        onChange={(e) =>
+                          setExtraDelayMs(parseInt(e.target.value || "0", 10))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Фактическ��я задержка: {effectiveDelay} мс
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Stats/Analytics Section */}
+              {activeSection === "stats" && (
+                <Card className="border-border/50 bg-card/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Аналитика</CardTitle>
+                    <CardDescription>
+                      Просмотрите де��альную статистику и отчеты
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Визуализация аналитики будет отображена здесь</p>
+                      <p className="text-sm mt-2">
+                        ��апустите бота для просмотра статистики
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Articles Table Style Card */}
+              <Card className="border-border/50 bg-card/50">
+                <CardHeader>
+                  <CardTitle className="text-sm">НАЗВАНИЕ СТАТЬИ</CardTitle>
+                  <CardDescription className="grid grid-cols-5 gap-4 mt-4">
+                    <span>РЕЙТИНГ</span>
+                    <span>СТАТУС</span>
+                    <span>ПРОСМОТРЫ</span>
+                    <span>ЦЕНА</span>
+                    <span>ДАТА</span>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-5 gap-4 text-sm py-2 border-b border-border">
+                      <div>
+                        <div className="font-medium text-foreground">
+                          Исследования в рекламе
                         </div>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
+                      </div>
+                      <div>
+                        <span className="inline-block w-2 h-2 rounded-full bg-primary mr-2"></span>
+                        <span className="text-xs text-muted-foreground">
+                          Открыть анализ
+                        </span>
+                      </div>
+                      <div>
+                        <div className="w-20 h-1 bg-primary/30 rounded-full"></div>
+                      </div>
+                      <div className="text-muted-foreground">Детали</div>
+                      <div className="text-muted-foreground text-xs">
+                        23 августа 2017
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-5 gap-4 text-sm py-2">
+                      <div>
+                        <div className="font-medium text-foreground">
+                          Продажа брошюр
+                        </div>
+                      </div>
+                      <div>
+                        <span className="inline-block w-2 h-2 rounded-full bg-muted mr-2"></span>
+                        <span className="text-xs text-muted-foreground">
+                          Закрыть анализ
+                        </span>
+                      </div>
+                      <div>
+                        <div className="w-16 h-1 bg-primary/30 rounded-full"></div>
+                      </div>
+                      <div className="text-muted-foreground">Детали</div>
+                      <div className="text-muted-foreground text-xs">
+                        23 августа 2017
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-              <div className="grid gap-2">
-                <Label>Минимальный возраст: {minAge}+ </Label>
-                <Slider
-                  value={[minAge]}
-                  min={14}
-                  max={60}
-                  step={1}
-                  onValueChange={(v) => setMinAge(v[0])}
-                />
-              </div>
+            {/* Right Column - Stats */}
+            <div className="space-y-6">
+              {/* Control Card */}
+              <Card className="border-border/50 bg-card/50">
+                <CardHeader>
+                  <CardTitle className="text-sm">Управление</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button
+                    onClick={start}
+                    disabled={running}
+                    className="w-full bg-sidebar-primary hover:bg-sidebar-primary/90"
+                  >
+                    Старт
+                  </Button>
+                  <Button
+                    onClick={stop}
+                    variant="outline"
+                    disabled={!running}
+                    className="w-full"
+                  >
+                    Стоп
+                  </Button>
+                </CardContent>
+              </Card>
 
-              <div className="grid gap-2">
-                <Label htmlFor="profession">
-                  Профессия (поиск по Occupation)
-                </Label>
-                <Input
-                  id="profession"
-                  placeholder="например: дизайнер"
-                  value={profession}
-                  onChange={(e) => setProfession(e.target.value)}
-                />
-              </div>
+              {/* Statistics */}
+              <Card className="border-border/50 bg-card/50">
+                <CardHeader>
+                  <CardTitle className="text-sm">Статистика</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">
+                        Успешные заявки
+                      </span>
+                      <span className="text-foreground font-semibold">
+                        {successCount}
+                      </span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{
+                          width:
+                            successCount > 0
+                              ? Math.min(
+                                  (successCount /
+                                    Math.max(successCount + errorCount, 1)) *
+                                    100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Ошибки</span>
+                      <span className="text-foreground font-semibold">
+                        {errorCount}
+                      </span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{
+                          width:
+                            errorCount > 0
+                              ? Math.min(
+                                  (errorCount /
+                                    Math.max(successCount + errorCount, 1)) *
+                                    100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">
+                        VK API вызовы
+                      </span>
+                      <span className="text-foreground font-semibold">
+                        {vkCalls}
+                      </span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{
+                          width:
+                            vkCalls > 0
+                              ? Math.min(
+                                  (vkCalls / Math.max(vkCalls * 0.5, 1)) * 100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">
+                        Всего контактов
+                      </span>
+                      <span className="text-foreground font-semibold">
+                        {sentUserIds.size}
+                      </span>
+                    </div>
+                    <div className="h-1 bg-primary/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{
+                          width:
+                            sentUserIds.size > 0
+                              ? Math.min(
+                                  (sentUserIds.size /
+                                    Math.max(sentUserIds.size * 0.7, 1)) *
+                                    100,
+                                  100,
+                                )
+                              : 0 + "%",
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              <div className="flex items-center justify-between">
-                <div className="grid gap-1">
-                  <Label>Только онлайн</Label>
-                  <span className="text-xs text-muted-foreground">
-                    Искать только пользователей в сети
-                  </span>
-                </div>
-                <Switch checked={onlyOnline} onCheckedChange={setOnlyOnline} />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Управление</CardTitle>
-              <CardDescription>
-                Запустите или остановите отправку заявок в друзья.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-3">
-                <Button onClick={start} disabled={running} className="min-w-28">
-                  Старт
-                </Button>
-                <Button
-                  onClick={stop}
-                  variant="secondary"
-                  disabled={!running}
-                  className="min-w-28"
-                >
-                  Стоп
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Настройки скорости</CardTitle>
-              <CardDescription>
-                Ограничения для безопасности аккаунта.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-5">
-              <div className="grid gap-2">
-                <Label>Количество друзей у кандидата</Label>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="grid gap-1">
-                    <Label className="text-xs">Минимум</Label>
-                    <Input
-                      type="number"
-                      value={minFriends}
-                      onChange={(e) =>
-                        setMinFriends(parseInt(e.target.value || "0", 10))
+              {/* Log */}
+              <Card className="border-border/50 bg-card/50 flex flex-col">
+                <CardHeader>
+                  <CardTitle className="text-sm">Лог</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col">
+                  <div
+                    ref={logsRef}
+                    className="h-48 overflow-y-auto rounded-md border bg-background px-3 py-2 text-xs font-mono text-muted-foreground flex-1"
+                  >
+                    {logs.length === 0 ? (
+                      <div className="text-muted-foreground">
+                        Ожидание активности бота...
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        {logs.map((l, i) => (
+                          <div key={i} className="text-[10px]">
+                            {l}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setLogs([])}
+                      className="text-xs h-8"
+                    >
+                      Очистить
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        navigator.clipboard.writeText(logs.join("\n"))
                       }
-                    />
+                      className="text-xs h-8"
+                    >
+                      Копировать
+                    </Button>
                   </div>
-                  <div className="grid gap-1">
-                    <Label className="text-xs">Максимум</Label>
-                    <Input
-                      type="number"
-                      value={maxFriends}
-                      onChange={(e) =>
-                        setMaxFriends(parseInt(e.target.value || "0", 10))
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="grid gap-2">
-                <Label>Заявок в час</Label>
-                <Input
-                  type="number"
-                  value={requestsPerHour}
-                  onChange={(e) =>
-                    setRequestsPerHour(parseInt(e.target.value || "0", 10))
-                  }
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label>Доп. задержка между заявками (мс)</Label>
-                <Input
-                  type="number"
-                  value={extraDelayMs}
-                  onChange={(e) =>
-                    setExtraDelayMs(parseInt(e.target.value || "0", 10))
-                  }
-                />
-                <div className="text-xs text-muted-foreground">
-                  Фактическая задержка: {effectiveDelay} мс
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="h-[280px]">
-            <CardHeader>
-              <CardTitle>Статистика</CardTitle>
-              <CardDescription>Краткая статистика работы бота</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="grid gap-2 text-sm">
-                <div>
-                  Успешных заявок: <strong>{successCount}</strong>
-                </div>
-                <div>
-                  Ошибок: <strong>{errorCount}</strong>
-                </div>
-                <div>
-                  VK API вызовов: <strong>{vkCalls}</strong>
-                </div>
-                <div className="border-t pt-2">
-                  Всего контактировано (все сессии):{" "}
-                  <strong>{sentUserIds.size}</strong>
-                </div>
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => {
-                  setSentUserIds(new Set());
-                  addLog("История отправленных заявок очищена");
-                }}
-              >
-                Очистить историю контактов
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="h-[420px]">
-            <CardHeader>
-              <CardTitle>Лог действий</CardTitle>
-              <CardDescription>
-                Поиск, отправка заявок и ошибки в реальном времени.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div
-                ref={logsRef}
-                className="h-72 overflow-y-auto rounded-md border bg-card px-3 py-2 text-sm font-mono"
-              >
-                {logs.length === 0 ? (
-                  <div className="text-muted-foreground">
-                    Здесь будут отображаться действия бота...
-                  </div>
-                ) : (
-                  <div className="space-y-1">
-                    {logs.map((l, i) => (
-                      <div key={i}>{l}</div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="mt-3 flex gap-2">
-                <Button variant="secondary" onClick={() => setLogs([])}>
-                  Очистить лог
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigator.clipboard.writeText(logs.join("\n"))}
-                >
-                  Скопировать
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="py-6 text-center text-xs text-muted-foreground">
-        Только для образовательных целей. Соблюдайте правила VK и избегайте
-        спама.
-      </footer>
     </div>
   );
 }
